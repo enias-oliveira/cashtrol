@@ -1,6 +1,6 @@
 from flask import Flask
 
-from app.users.route import users_bp
+from app.users.view import users_bp
 
 
 def init_app(app: Flask):

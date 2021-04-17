@@ -8,3 +8,6 @@ db = SQLAlchemy()
 def init_app(app: Flask):
     db.init_app(app)
     app.db = db
+
+    from app.users.model import UserModel
+    from app.groups.model import GroupModel

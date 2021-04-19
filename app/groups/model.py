@@ -21,3 +21,5 @@ class GroupModel(db.Model):
     )
 
     entries_list = db.relationship("JournalModel", backref="group")
+
+    categories_list = db.relationship("CategoryModel", backref="group")

@@ -14,3 +14,4 @@ def init_app(app: Flask):
     from app.accounts.model import AccountModel
     from app.journal.model import JournalModel
     from app.transactions.model import TransactionModel
+    from app.categories.model import CategoryModel

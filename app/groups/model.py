@@ -19,3 +19,7 @@ class GroupModel(db.Model):
     members_list = db.relationship(
         "UserModel", backref="groups_list", secondary="accounts"
     )
+
+    entries_list = db.relationship("JournalModel", backref="group")
+
+    categories_list = db.relationship("CategoryModel", backref="group")

@@ -12,3 +12,7 @@ def init_app(app: Flask):
     from app.users.model import UserModel
     from app.groups.model import GroupModel
     from app.accounts.model import AccountModel
+    from app.journal.model import JournalModel
+    from app.transactions.model import TransactionModel
+    from app.categories.model import CategoryModel
+    from app.expenses.model import ExpenseModel

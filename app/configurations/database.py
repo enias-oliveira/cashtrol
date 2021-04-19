@@ -15,3 +15,4 @@ def init_app(app: Flask):
     from app.journal.model import JournalModel
     from app.transactions.model import TransactionModel
     from app.categories.model import CategoryModel
+    from app.expenses.model import ExpenseModel

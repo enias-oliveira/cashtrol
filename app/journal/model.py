@@ -26,3 +26,5 @@ class JournalModel(db.Model):
     )
 
     transactions_list = db.relationship("TransactionModel", backref="entry")
+
+    expense = db.relationship("ExpenseModel", uselist=False, backref="entry")

@@ -30,3 +30,11 @@ class TransactionModel(db.Model):
             ondelete="CASCADE",
         ),
     )
+
+    target_user = db.relationship(
+        "UserModel", backref="transactions_list", secondary="accounts"
+    )
+
+    group = db.relationship(
+        "GroupModel", backref="transactions_list", secondary="accounts"
+    )

@@ -4,33 +4,6 @@ from app.app import create_app
 import app
 from pytest import fixture
 
-# from  app.app import create_app
-# from  app.users.model import UserModel
-
-# @fixture()
-# def test_app(scope="module"):
-#     app = create_app()
-#     app.app_context().push()
-#     app.db.create_all()
-
-#     yield app
-
-#     app.db.session.remove()
-#     app.db.drop_all()
-
-# @fixture(scope="module")
-# def test_client(test_app):
-#     return test_app.test_client()
-
-# def test_standard_user_create(test_client)
-
-#     user_bory{
-
-#     }
-
-
-#Exemplo Guilherme
-
 @fixture
 def app():
     return create_app()
@@ -60,11 +33,47 @@ def user_data(client):
 	"password" : "EuSouFulano123"
     }
 
+@fixture
+def login_user(client):
+    
+    return {   
+    "email" : "fulano@email.com",
+	"password" : "EuSouFulano123"
+
+}
+
+@fixture
+def user_updated(client):
+    
+    return {   
+    "email" : "fulano@email.com",
+	"password" : "EuSouFulano123"
+
+}
+
+@fixture
+def user_deleted(client):
+    
+    return {   
+    "email" : "fulano@email.com",
+	"password" : "EuSouFulano123"
+
+}
+
+
+
 def test_list_with_no_users(client):
 
     response = client.get('/api/users')
 
     assert response.json == None
+
+# def test_list_with_users(cliente):
+
+#     response = client.get('/api/users')
+
+#     assert response.status_code == 308
+
 
 def test_create_user(client, user_data):
 
@@ -73,6 +82,25 @@ def test_create_user(client, user_data):
     response = client.get('/api/users/')
 
     assert len(response.json) == 1
+
+# def test_login_user(client, login_user):
+
+#     response = client.post('/api/login/',json=login_user)
+
+#     assert response.status_code == 200
+
+# def test_update_user(client, user_update):
+
+#     response = client.path(/api/users/profile)
+
+
+# def test_delete_user(client, ):
+
+#     response = client.delete('/api/user/id',json=delete_user)
+
+#     assert response.status_code == 200
+
+
 
 
 # def test_authenticated(client):

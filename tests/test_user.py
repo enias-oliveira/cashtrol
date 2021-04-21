@@ -4,8 +4,8 @@ from app.app import create_app
 import app
 from pytest import fixture
 
+
 # from  app.app import create_app
-# from  app.users.model import UserModel
 
 # @fixture()
 # def test_app(scope="module"):
@@ -42,22 +42,23 @@ def db(app):
     with app.app_context():
         db.create_all()
         yield db
+        db.session.remove()
+        # db.session.commit()
         db.drop_all()
-        db.session.commit()
 
 
 @fixture
 def user_data():
 
     return{
-	"name" : "Fulano Rodrigues",
-	"email" : "fulano@email.com",
-	"password" : "EuSouFulano123"
+	"name":"Fulano Rodrigues",
+	"email":"fulano@email.com",
+	"password_hash":"EuSouFulano123"
     }
 
-def create_users(db, user_data):
+def test_create_users(db, user_data):
 
-    user = UserModel(name=user_data['name'])
+    user = UserModel(name=user_data['name'], email=user_data['email'], password_hash=user_data['password_hash'])
 
     db.session.add(user)
     db.session.commit()
@@ -67,8 +68,16 @@ def create_users(db, user_data):
 
     assert actual.name == expected_name
 
+# def delete_users(db, user_data):
+#     user = UserModel(name=user_data['name'])
 
+#     db.session.add(user)
+#     db.session.commit()
 
+#     db.session.remove(user)
+#     db.session.commit()
 
+#     expected_name = " "
+#     actual = UserModel.query.get(1)
 
-    
+#     assert actual == expected_name

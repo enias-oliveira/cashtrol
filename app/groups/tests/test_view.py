@@ -4,33 +4,6 @@ from app.app import create_app
 import app
 from pytest import fixture
 
-# from  app.app import create_app
-# from  app.users.model import UserModel
-
-# @fixture()
-# def test_app(scope="module"):
-#     app = create_app()
-#     app.app_context().push()
-#     app.db.create_all()
-
-#     yield app
-
-#     app.db.session.remove()
-#     app.db.drop_all()
-
-# @fixture(scope="module")
-# def test_client(test_app):
-#     return test_app.test_client()
-
-# def test_standard_user_create(test_client)
-
-#     user_bory{
-
-#     }
-
-
-#Exemplo Guilherme
-
 @fixture
 def app():
     return create_app()
@@ -38,6 +11,7 @@ def app():
 @fixture
 def db(app):
     from app.configurations.database import db
+    
     # from ..app.configurations.database import db
 
     with app.app_context():
@@ -52,27 +26,46 @@ def client(app,db):
     return app.test_client()
 
 @fixture
-def user_data(client):
+def group_data(client):
 
     return{
-	"name" : "Fulano Rodrigues",
-	"email" : "fulano@email.com",
-	"password" : "EuSouFulano123"
+        "name": "AP da galera"
+    }
+@fixture
+def group_data(client):
+
+    return{
+        "name": "AP da galera"
     }
 
-def test_list_with_no_users(client):
 
-    response = client.get('/api/users')
+def test_list_with_no_groups(client):
+
+    response = client.get('/api/groups')
 
     assert response.json == None
 
-def test_create_user(client, user_data):
+def test_create_group(client, group_data):   
 
-    client.post('/api/users/', json=user_data)
+    client.post('/api/groups/', json=group_data)
 
-    response = client.get('/api/users/')
+    response = client.get('/api/groups/')
 
     assert len(response.json) == 1
+
+def test_list_groups(client, group_data):   
+
+    response = client.get('/api/groups/')    
+
+    assert response.status_code == 200
+
+# def test_update_groups(client, group_data):   
+
+#     response = client.get('/api/groups/')    
+
+#     assert response.status_code == 200
+
+
 
 
 # def test_authenticated(client):

@@ -9,3 +9,5 @@ class CategoryModel(db.Model):
     group_id = db.Column(
         db.Integer, db.ForeignKey("groups.id", onupdate="CASCADE", ondelete="CASCADE")
     )
+
+    expenses_list = db.relationship("ExpenseModel", backref="category")

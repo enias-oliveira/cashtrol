@@ -2,6 +2,9 @@ from app.configurations.database import db
 from app.accounts.model import AccountModel
 from app.journal.model import JournalModel
 from app.transactions.model import TransactionModel, TransactionType
+from app.expenses.model import ExpenseModel
+
+from datetime import date
 
 
 class GroupModel(db.Model):
@@ -79,3 +82,72 @@ class GroupModel(db.Model):
                 "debit": receiver_transaction,
             },
         }
+
+    def create_expense(
+        self,
+        name: str,
+        amount: id,
+        created_by: id,
+        splitted: dict,
+        category_id: int = None,
+        description: str = "",
+    ):
+        payers = splitted["payers"]
+        benefited = splitted["benefited"]
+
+        payers_id = [payer["payer_id"] for payer in payers]
+        benefited_id = [benefiter["benefited_id"] for benefiter in benefited]
+
+        if not self.are_members(payers_id + benefited_id):
+            raise ValueError("Not all users are group members.")
+
+        payers_amount = [payer["paid_amount"] for payer in payers]
+        benefited_amount = [benefiter["benefited_amount"] for benefiter in benefited]
+
+        from functools import reduce
+
+        payers_total = reduce(lambda acc, cur: acc + cur, payers_amount)
+        benefited_total = reduce(lambda acc, cur: acc + cur, benefited_amount)
+
+        if not amount == benefited_total == payers_total:
+            raise ValueError("Amount Splitted is diferent from Expense amount.")
+
+        expense_entry = JournalModel.create(
+            name=name,
+            amount=amount,
+            group_id=self.id,
+            created_by=created_by,
+            created_at=date.today(),
+        )
+
+        for payer in payers:
+            payer_account = AccountModel.query.filter_by(
+                user_id=payer["payer_id"], group_id=self.id
+            ).first()
+
+            TransactionModel.create(
+                amount=payer["paid_amount"],
+                type=TransactionType.debit,
+                entry_id=expense_entry.id,
+                target_account=payer_account.id,
+            )
+
+        for benefiter in benefited:
+            benefiter_account = AccountModel.query.filter_by(
+                user_id=benefiter["benefited_id"], group_id=self.id
+            ).first()
+
+            TransactionModel.create(
+                amount=benefiter["benefited_amount"],
+                type=TransactionType.credit,
+                entry_id=expense_entry.id,
+                target_account=benefiter_account.id,
+            )
+
+        expense = ExpenseModel.create(
+            description=description,
+            journal_id=expense_entry.id,
+            category_id=category_id,
+        )
+
+        return expense_entry

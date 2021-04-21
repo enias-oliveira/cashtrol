@@ -53,9 +53,9 @@ def bob(session):
 @fixture(scope="module")
 def group(session, alice):
     group = GroupModel(
-        name="AP da Galeris",
         access_code="123ABC",
         created_by=alice.id,
+        name="AP da Galeris",
     )
 
     session.add(group)

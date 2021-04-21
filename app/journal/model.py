@@ -32,16 +32,20 @@ class JournalModel(db.Model):
     expense = db.relationship("ExpenseModel", uselist=False, backref="entry")
 
     @classmethod
-    def create(cls, name: str, amount: float, group_id: int, created_by: id):
+    def create(
+        cls,
+        name: str,
+        amount: float,
+        group_id: int,
+        created_by: id,
+        **kwargs,
+    ):
         from flask import current_app
 
         session = current_app.db.session
 
         entry = cls(
-            name=name,
-            amount=amount,
-            group_id=group_id,
-            created_by=created_by,
+            name=name, amount=amount, group_id=group_id, created_by=created_by, **kwargs
         )
 
         session.add(entry)

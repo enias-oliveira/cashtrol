@@ -1,5 +1,4 @@
 from app.configurations.database import db
-from app.users.model import UserModel
 from app.accounts.model import AccountModel
 from app.journal.model import JournalModel
 from app.transactions.model import TransactionModel, TransactionType
@@ -35,7 +34,7 @@ class GroupModel(db.Model):
     def are_members(self, users_id: list) -> bool:
         return all([self.is_member(user_id) for user_id in users_id])
 
-    def create_payment(self, sender_id: int, receiver_id: int, amount: float) -> dict:
+    def create_payment(self, sender_id: int, receiver_id: int, amount: float):
         if not self.are_members([sender_id, receiver_id]):
             raise ValueError("Not all users are group members.")
 
@@ -49,11 +48,14 @@ class GroupModel(db.Model):
             group_id=self.id,
         ).first()
 
+        from datetime import date
+
         payment_entry: JournalModel = JournalModel.create(
             name="Pagamento",
             amount=amount,
             group_id=self.id,
             created_by=receiver_id,
+            created_at=date.today(),
         )
 
         sender_transaction: TransactionModel = TransactionModel.create(

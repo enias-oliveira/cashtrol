@@ -1,3 +1,4 @@
+from app.users.tests.test_view import user_deleted
 from os import name
 from app.users.model import UserModel
 from app.app import create_app
@@ -60,7 +61,7 @@ def test_create_users(db, user_data):
 
     user = UserModel(name=user_data['name'], email=user_data['email'], password_hash=user_data['password_hash'])
 
-    db.session.add(user)
+    db.session.add(user)    
     db.session.commit()
 
     expected_name = "Fulano Rodrigues"
@@ -68,16 +69,70 @@ def test_create_users(db, user_data):
 
     assert actual.name == expected_name
 
-# def delete_users(db, user_data):
-#     user = UserModel(name=user_data['name'])
+def test_delete_users(db, user_data):
+    user = UserModel(name=user_data['name'], email=user_data['email'], password_hash=user_data['password_hash'])
+    print("user",user)
+    db.session.add(user)
+    db.session.commit()
 
-#     db.session.add(user)
-#     db.session.commit()
+    # user_deleted = db.select([users]).where(users.column.id == 1)
+    table = db.session.query(UserModel)
+    user_deleted =  table.filter(UserModel.id == 1).first()
+    print("deleted",user_deleted)
+    db.session.delete(user)
+    db.session.commit()
 
-#     db.session.remove(user)
-#     db.session.commit()
+    expected_name = None
+    
+    actual = table.filter(UserModel.id == 1).first()
 
-#     expected_name = " "
-#     actual = UserModel.query.get(1)
+    assert actual == expected_name
 
-#     assert actual == expected_name
+def test_update_users(db, user_data):
+    user = UserModel(name=user_data['name'], email=user_data['email'], password_hash=user_data['password_hash'])
+    print("user",user)
+    db.session.add(user)
+    db.session.commit()
+
+    # user_deleted = db.select([users]).where(users.column.id == 1)
+    table = db.session.query(UserModel)
+    user_updated =  table.filter(UserModel.id == 1).first()
+    user_updated.name = "Adilson"
+
+    db.session.add(user_updated)   
+    user_atual = table.filter(UserModel.name == "Adilson").first().name
+    
+    print("updated",user_deleted)
+    db.session.commit()
+
+    expected_name = "Adilson"
+    
+    actual = user_atual
+
+    assert actual == expected_name
+
+
+def test_select_users(db, user_data):
+    user = UserModel(name=user_data['name'], email=user_data['email'], password_hash=user_data['password_hash'])
+    print("user",user)
+    db.session.add(user)
+    db.session.commit()
+
+    # user_deleted = db.select([users]).where(users.column.id == 1)
+    table = db.session.query(UserModel)
+    user_updated =  table.filter(UserModel.id == 1).first()
+    user_updated.name = "Adilson"
+
+    db.session.add(user_updated)   
+    user_atual = table.filter(UserModel.name == "Adilson").first().name
+    
+    print("updated",user_deleted)
+    db.session.commit()
+
+    expected_name = "Adilson"
+    
+    actual = user_atual
+
+    assert actual == expected_name
+
+

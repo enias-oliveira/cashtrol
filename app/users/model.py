@@ -11,13 +11,12 @@ class UserModel(db.Model):
     password_hash = db.Column(db.String, nullable=True)
 
     @property
-    def password(self):
-        raise TypeError("A senha não pode ser acessada")
+    def password(self) -> None:
+        raise NotImplementedError("Password is not accessible")
 
     @password.setter
-    def password(self, new_password):
-        new_password_hash = generate_password_hash(new_password)
-        self.password_hash = new_password_hash
+    def password(self, new_password: str) -> None:
+        self.password_hash = generate_password_hash(new_password)
 
-    def check_password(self, password_to_compare):
-        return check_password_hash(self.password_hash, password_to_compare)
+    def validate_password(self, given_password: str) -> bool:
+        return check_password_hash(self.password_hash, given_password)

@@ -24,7 +24,7 @@ def login():
 
     found_user: UserModel = UserModel.query.filter_by(email=email).first()
 
-    if not found_user or not found_user.check_password(password):
+    if not found_user or not found_user.validate_password(password):
         return {"msg": "User not found"}, HTTPStatus.BAD_REQUEST
 
     access_token = create_access_token(

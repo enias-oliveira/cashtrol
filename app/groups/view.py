@@ -12,28 +12,23 @@ def hello_groups():
     return {"msg": "Hello groups"}
 
 @groups_bp.route("/members", methods=["POST"])
-# @jwt_required()
-def adding_new_member_to_group():
-    # USAR o JWT pra pegar o ID
-    
+@jwt_required()
+def adding_new_member_to_group():    
     data = request.get_json()
-    headers = request.headers['Authorization']
-    user_id = int(headers.split()[1])
 
-    # jwt = get_jwt_identity()
-    # print('jwt---------', jwt)
+    jwt_id = get_jwt_identity()
 
     code = get_invitation_code(data)
     table_group = db.session.query(GroupModel)
     group = table_group.filter(GroupModel.access_code == code).first()
+
     if not group:
         return {"error": "Group not found."}
 
-    if group.is_member(user_id):
+    if group.is_member(jwt_id):
         return {"error": "User already in group."}
 
-    # Se não for membro, adicionar a relação a table accounts
-    new_account = AccountModel(group_id=group.id, user_id=user_id)
+    new_account = AccountModel(group_id=group.id, user_id=jwt_id)
     db.session.add(new_account)
 
     db.session.commit()

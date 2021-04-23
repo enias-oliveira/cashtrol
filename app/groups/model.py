@@ -30,6 +30,9 @@ class GroupModel(db.Model):
 
     categories_list = db.relationship("CategoryModel", backref="group")
 
+    def __repr__(self):
+        return f'<Grupo {self.name} -- Feito por id->{self.created_by}>'
+
     def is_member(self, user_id: int) -> int:
         members_id = [member.id for member in self.members_list]
         return user_id in members_id

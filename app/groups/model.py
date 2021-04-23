@@ -1,4 +1,5 @@
 from app.configurations.database import db
+from app.users.model import UserModel
 from app.accounts.model import AccountModel
 from app.journal.model import JournalModel
 from app.transactions.model import TransactionModel, TransactionType
@@ -60,13 +61,13 @@ class GroupModel(db.Model):
             name="Pagamento",
             amount=amount,
             group_id=self.id,
-            created_by=receiver_id,
+            created_by=sender_id,
             created_at=date.today(),
         )
 
         sender_transaction: TransactionModel = TransactionModel.create(
             amount=100,
-            type=TransactionType.credit,
+            type=TransactionType.debit,
             entry_id=payment_entry.id,
             target_account=sender_account.id,
         )
@@ -156,3 +157,36 @@ class GroupModel(db.Model):
         )
 
         return expense_entry
+
+    def list_all_transactions(self):
+        entries = JournalModel.query.filter_by(group_id=self.id).all()
+
+        from app.transactions.services import transaction_serializer
+
+        serialized_entries = [transaction_serializer(entry) for entry in entries]
+
+        return serialized_entries
+
+    def get_balance(self):
+        def get_member_transactions(member: UserModel):
+            return (
+                member.id,
+                [
+                    transaction
+                    for transaction in self.transactions_list
+                    if transaction.target_user.first().id == member.id
+                ],
+            )
+
+        members_transactions = [
+            get_member_transactions(member) for member in self.members_list
+        ]
+
+        from .services import create_member_balance
+
+        members_balance = [
+            create_member_balance(*member_transaction)
+            for member_transaction in members_transactions
+        ]
+
+        return {"balance": members_balance}

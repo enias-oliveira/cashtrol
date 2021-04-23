@@ -35,6 +35,7 @@ class TransactionModel(db.Model):
         "UserModel",
         backref="transactions_list",
         secondary="accounts",
+        lazy="dynamic",
         viewonly=True,
     )
 
@@ -42,6 +43,7 @@ class TransactionModel(db.Model):
         "GroupModel",
         backref="transactions_list",
         secondary="accounts",
+        lazy="dynamic",
         viewonly=True,
     )
 

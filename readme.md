@@ -1,7 +1,5 @@
 ## Criação de Usuário
 
-    ```python
-
 # POST: {URL}api/users/signup
 
         Body:
@@ -11,7 +9,7 @@
         	“password” : “EuSouFulano123”
         }
 
-#------------------------------------
+        #------------------------------------
 
         Return:
         CREATED 201
@@ -19,11 +17,8 @@
         	“id” : 23034,
         	“email” : “fulano@email.com”,
         }
-    ```
 
 ## Login de Usuário
-
-```python
 
         #POST: {URL}api/users/login
         Body:
@@ -40,32 +35,30 @@
         	“access_token” : “erfweu39gvgrw3vniv5aael1rvakbe2r234uigeiate32r
         	atveityvbaer258v2”
         }
-```
 
 ## Ler Dados de Usuário
 
-```python
-#GET: {URL}/users
-#Token : True
-Return 200
-{“id” : 23034
-“name” : “Fulano Rodrigues”,
-“email” : “fulano@email.com”,
-“groups” : [{ “group_name” : “República”, “group_id” : 20} ,
-{ “group_name” :  “Eu e a Mina”, “group_id” : 23}],
-“payables” : 50,
-“receivables”: 20,
-“saldo” : 30
-}
-```
+        #GET: {URL}/users
+        #Token : True
+        Return 200
+        {“id” : 23034
+        “name” : “Fulano Rodrigues”,
+        “email” : “fulano@email.com”,
+        “groups” : [{ “group_name” : “República”, “group_id” : 20} ,
+        { “group_name” :  “Eu e a Mina”, “group_id” : 23}],
+        “payables” : 50,
+        “receivables”: 20,
+        “saldo” : 30
+        }
 
 ## Histórico de Transações
 
-```python
         #GET {URL}/users/transactions
         #Token : True
         #Param: True
+
         Return Success 200
+
         { “data” : [{“id” : 3402,
         “entry: {“entry_name”:”Energia”, “entry_id”: 203},
         “type”: “DEBIT”,
@@ -85,11 +78,9 @@ Return 200
         “group_id” : {“group_id: 79, “group_name” : “Fraternidade”}
         },
         …]
-```
 
 ## Atualizar Dados de Usuário
 
-```python
         #PATCH: {URL}/users
         #TOKEN: True
 
@@ -104,19 +95,15 @@ Return 200
         “Name” : “fulano”,
         “Email”: “fulano2@email.com”
         }
-```
 
 ## Deletar Usuário
 
-```python
         #DELETE:  {URL}/users
 
-Return 204
-```
+        Return 204
 
 ## Criar um Grupo
 
-```python
         #POST {URL}/groups
         #Token: True
 
@@ -130,11 +117,9 @@ Return 204
         “name”:”AP da galera”,
         “Invite_code”: “Y35ER0”
         }
-```
 
 ## Listar Grupos com relação ao Usuário
 
-```python
         #GET {URL}/groups
         #Token : True
 
@@ -153,11 +138,9 @@ Return 204
         “Invite_code”: “Y35TP0”
         }
         ]
-```
 
 ## Dados de um Grupo Específico
 
-```python
         #GET {URL}/groups/{group_id}
         #Token : True
 
@@ -170,11 +153,9 @@ Return 204
         “Categories” : [4,23,5,7],
         “Invite_code”: “Y35TP0”
         },
-```
 
 ## Adicionando um membro ao grupo por convite
 
-```python
         #POST {URL}/groups/members
         #Token: True
 
@@ -189,11 +170,9 @@ Return 204
         “Invite_code”: “Y35ER0”,
         “members”: [1,3,4],
         }
-```
 
 ## Listar membros do grupo
 
-```python
         #GET {URL}/groups/{group_id}/members
         #Token : True
 
@@ -204,11 +183,9 @@ Return 204
         “Members”: [ {“member_id” : 3, “member_name” : “Fulano”},
         		{“member_id” : 4, “member_name” : “Ciclano”}]
         }
-```
 
 ## Balanço de um grupo
 
-```python
         #GET {URL}/groups/{group_id}/balance
         #Token: True
 
@@ -217,11 +194,9 @@ Return 204
         “balance” : [ {“user_id” : 1, “user_saldo” : 30”},
         		   {“user_id” : 24, “user_saldo” : -20},
         ]
-```
 
 ## Transações de um Grupo Específico
 
-```python
         #GET {URL}/groups/{group_id}/transactions
         #Token: True
         Return:
@@ -248,11 +223,9 @@ Return 204
                                     {“benefited_id” : 3, “benefited_amount” : 30} ]
                              }
         ]
-```
 
 ## Balanço de todos os grupos
 
-```python
         #GET {URL}/groups/balance
         #Token : True
         Return:
@@ -268,11 +241,9 @@ Return 204
         		   	{“user_id” : 24, “user_saldo” : -20},
         }
         ]
-```
 
 ## Criação de um pagamento para um usuário
 
-```python
         #POST {URL}/groups/{group_id}/payments
         #Token:true
         Body:{
@@ -289,11 +260,9 @@ Return 204
         “group” : “Galera do AP”,
         “created_at” : “05/04/2020”,
         }
-```
 
 ## Histórico de Pagamentos de um Grupo
 
-```python
         #GET {URL}/groups/{groups_id}/payments
         #Token: true
 
@@ -323,11 +292,9 @@ Return 204
 
         ...]
         }
-```
 
 ## Criação de uma Despesa
 
-```python
         #POST: {URL}/groups/{group_id}/expenses
 
         #TOKEN = TRUE
@@ -379,11 +346,9 @@ Return 204
         {“benefited_id” : 40, “benefited_amount” : 30} ]
         }
         } ] }
-```
 
 ## Histórico de uma Despesa Específica
 
-```python
         #GET {URL}groups/{group_id}/expenses/{expense_id}
         #Token: true
 
@@ -406,11 +371,9 @@ Return 204
         }
         }
         }
-```
 
 ## Histórico de Despesas de um Grupo Específico
 
-```python
         #GET {URL}/groups/{groups_id}/expenses
         #Token: true
 
@@ -449,4 +412,3 @@ Return 204
         } ,
         ...]
         }
-```

@@ -105,7 +105,8 @@ class GroupModel(db.Model):
             raise ValueError("Not all users are group members.")
 
         payers_amount = [payer["paid_amount"] for payer in payers]
-        benefited_amount = [benefiter["benefited_amount"] for benefiter in benefited]
+        benefited_amount = [benefiter["benefited_amount"]
+                            for benefiter in benefited]
 
         from functools import reduce
 
@@ -113,7 +114,8 @@ class GroupModel(db.Model):
         benefited_total = reduce(lambda acc, cur: acc + cur, benefited_amount)
 
         if not amount == benefited_total == payers_total:
-            raise ValueError("Amount Splitted is diferent from Expense amount.")
+            raise ValueError(
+                "Amount Splitted is diferent from Expense amount.")
 
         expense_entry = JournalModel.create(
             name=name,

@@ -52,4 +52,28 @@ def signup():
         identity=new_user.id, expires_delta=timedelta(days=7)
     )
 
-    return {"user": {'access_token': access_token, 'id': new_user.id, 'email': email, }}, HTTPStatus.CREATED
+    return {"user": {'id': new_user.id, 'email': new_user.email, }}, HTTPStatus.CREATED
+
+
+@users_bp.route("/update", methods=["PATCH"])
+@jwt_required()
+def update():
+    session = current_app.db.session
+    table = session.query(UserModel)
+    current_user_id = get_jwt_identity()
+    user = table.filter(UserModel.id == current_user_id).first()
+
+    if user:
+        new_name = request.json.get('name')
+        new_email = request.json.get('email')
+        if request.json.get('name'):
+            user.name = new_name
+
+        if request.json.get('email'):
+            user.email = new_email
+
+        session.commit()
+
+        return {'id': str(current_user_id), 'name': user.name, 'email': user.email}, HTTPStatus.OK
+
+    return {'Error': 'User not found'}, HTTPStatus.NOT_FOUND

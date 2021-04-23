@@ -1,8 +1,14 @@
+import string
+import random
+
 from .model import TransactionModel, TransactionType
 
 
-def get_invitation_code(data):
-    return data["invite_code"]
+def create_invitation_code():
+    letters = string.ascii_uppercase + string.digits
+    random_letters = "".join(random.choice(letters) for i in range(6))
+
+    return random_letters
 
 
 def create_member_balance(member_id, transactions_list: list[TransactionModel]):

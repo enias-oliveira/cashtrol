@@ -5,7 +5,7 @@ from app.journal.model import JournalModel
 from app.transactions.model import TransactionModel, TransactionType
 from app.expenses.model import ExpenseModel
 
-from datetime import date
+from datetime import datetime
 
 
 class GroupModel(db.Model):
@@ -32,7 +32,7 @@ class GroupModel(db.Model):
     categories_list = db.relationship("CategoryModel", backref="group")
 
     def __repr__(self):
-        return f'<Grupo {self.name} -- Feito por id->{self.created_by}>'
+        return f"<Grupo {self.name} -- Feito por id->{self.created_by}>"
 
     def is_member(self, user_id: int) -> int:
         members_id = [member.id for member in self.members_list]
@@ -55,25 +55,23 @@ class GroupModel(db.Model):
             group_id=self.id,
         ).first()
 
-        from datetime import date
-
         payment_entry: JournalModel = JournalModel.create(
             name="Pagamento",
             amount=amount,
             group_id=self.id,
             created_by=sender_id,
-            created_at=date.today(),
+            created_at=datetime.now(),
         )
 
         sender_transaction: TransactionModel = TransactionModel.create(
-            amount=100,
+            amount=amount,
             type=TransactionType.debit,
             entry_id=payment_entry.id,
             target_account=sender_account.id,
         )
 
         receiver_transaction: TransactionModel = TransactionModel.create(
-            amount=100,
+            amount=amount,
             type=TransactionType.credit,
             entry_id=payment_entry.id,
             target_account=receiver_account.id,
@@ -106,8 +104,7 @@ class GroupModel(db.Model):
             raise ValueError("Not all users are group members.")
 
         payers_amount = [payer["paid_amount"] for payer in payers]
-        benefited_amount = [benefiter["benefited_amount"]
-                            for benefiter in benefited]
+        benefited_amount = [benefiter["benefited_amount"] for benefiter in benefited]
 
         from functools import reduce
 
@@ -115,15 +112,14 @@ class GroupModel(db.Model):
         benefited_total = reduce(lambda acc, cur: acc + cur, benefited_amount)
 
         if not amount == benefited_total == payers_total:
-            raise ValueError(
-                "Amount Splitted is diferent from Expense amount.")
+            raise ValueError("Amount Splitted is diferent from Expense amount.")
 
         expense_entry = JournalModel.create(
             name=name,
             amount=amount,
             group_id=self.id,
             created_by=created_by,
-            created_at=date.today(),
+            created_at=datetime.now(),
         )
 
         for payer in payers:
@@ -189,4 +185,45 @@ class GroupModel(db.Model):
             for member_transaction in members_transactions
         ]
 
-        return {"balance": members_balance}
+        return members_balance
+
+    def suggested_payments(self):
+        balances = self.get_balance()
+
+        suggestions = []
+
+        while len(balances) > 1:
+            saldos = [balance.get("user_saldo") for balance in balances]
+            owed_amount = min(saldos)
+            ower = next(
+                balance["user_id"]
+                for balance in balances
+                if balance["user_saldo"] == owed_amount
+            )
+            lend_amount = max(saldos)
+            lender = next(
+                balance["user_id"]
+                for balance in balances
+                if balance["user_saldo"] == lend_amount
+            )
+
+            if owed_amount != 0:
+                suggestions.append(
+                    {"payer": ower, "receiver": lender, "amount": abs(owed_amount)}
+                )
+
+            new_balance = []
+
+            for balance in balances:
+                if balance["user_id"] == ower:
+                    continue
+                elif balance["user_id"] == lender:
+                    new_balance.append(
+                        {"user_id": lender, "user_saldo": (lend_amount - owed_amount)}
+                    )
+                else:
+                    new_balance.append(balance)
+
+            balances = new_balance
+
+        return {"suggedted_payments": suggestions}

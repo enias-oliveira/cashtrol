@@ -246,3 +246,17 @@ def test_create_expense(
         actual_transactions_debit_target_account_id
         == expected_transactions_debit_target_account_id
     )
+
+
+def test_get_balance(group: GroupModel):
+    expected = {
+        "balance": [
+            {"user_id": 1, "user_saldo": 160.00},
+            {"user_id": 2, "user_saldo": -130.00},
+            {"user_id": 3, "user_saldo": -30.00},
+        ]
+    }
+
+    actual = group.get_balance()
+
+    assert actual == expected
